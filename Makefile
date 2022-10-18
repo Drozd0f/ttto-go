@@ -1,8 +1,19 @@
-run:
-	go run ./cmd/ run
+COMPOSE ?= docker-compose -f ops/docker-compose.yml
 
-migrate:
-	go run ./cmd/ migrate
+run:
+	$(COMPOSE) up --build --force-recreate -d
+
+rm:
+	$(COMPOSE) rm -sfv
+
+log:
+	$(COMPOSE) logs -f muzlag 
+
+# run-ttto:
+# 	go run ./cmd/ run
+
+# migrate:
+# 	go run ./cmd/ migrate
 
 generate-sql:
 	sqlc generate

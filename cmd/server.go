@@ -5,24 +5,30 @@ import (
 
 	"github.com/urfave/cli/v2"
 
+	"github.com/Drozd0f/ttto-go/conf"
 	"github.com/Drozd0f/ttto-go/repository"
 	"github.com/Drozd0f/ttto-go/server"
 	"github.com/Drozd0f/ttto-go/service"
 )
 
 func runServer(c *cli.Context) error {
+	cfg, err := conf.New()
+	if err != nil {
+		return fmt.Errorf("conf new: %w", err)
+	}
+
 	r, err := repository.New(
 		c.Context,
-		"postgres://test:test@localhost:5432/test?sslmode=disable",
+		cfg.DBURI,
 	)
 	if err != nil {
 		return fmt.Errorf("repository new: %w", err)
 	}
 
 	s := service.New(r)
-	serv := server.New(s)
+	serv := server.New(s, cfg)
 
-	if err = serv.Run(); err != nil {
+	if err = serv.Run(cfg.Addr); err != nil {
 		return fmt.Errorf("server run: %w", err)
 	}
 
