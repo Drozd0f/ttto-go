@@ -24,17 +24,73 @@ func New(db DBTX) *Queries {
 func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	q := Queries{db: db}
 	var err error
+	if q.createGameStmt, err = db.PrepareContext(ctx, createGame); err != nil {
+		return nil, fmt.Errorf("error preparing query CreateGame: %w", err)
+	}
+	if q.createUserStmt, err = db.PrepareContext(ctx, createUser); err != nil {
+		return nil, fmt.Errorf("error preparing query CreateUser: %w", err)
+	}
+	if q.getGameByIdStmt, err = db.PrepareContext(ctx, getGameById); err != nil {
+		return nil, fmt.Errorf("error preparing query GetGameById: %w", err)
+	}
+	if q.getGamesStmt, err = db.PrepareContext(ctx, getGames); err != nil {
+		return nil, fmt.Errorf("error preparing query GetGames: %w", err)
+	}
+	if q.getTotalGamesStmt, err = db.PrepareContext(ctx, getTotalGames); err != nil {
+		return nil, fmt.Errorf("error preparing query GetTotalGames: %w", err)
+	}
 	if q.getUserByIDStmt, err = db.PrepareContext(ctx, getUserByID); err != nil {
 		return nil, fmt.Errorf("error preparing query GetUserByID: %w", err)
+	}
+	if q.getUserByUsernameStmt, err = db.PrepareContext(ctx, getUserByUsername); err != nil {
+		return nil, fmt.Errorf("error preparing query GetUserByUsername: %w", err)
+	}
+	if q.updateGameByIdStmt, err = db.PrepareContext(ctx, updateGameById); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateGameById: %w", err)
 	}
 	return &q, nil
 }
 
 func (q *Queries) Close() error {
 	var err error
+	if q.createGameStmt != nil {
+		if cerr := q.createGameStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing createGameStmt: %w", cerr)
+		}
+	}
+	if q.createUserStmt != nil {
+		if cerr := q.createUserStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing createUserStmt: %w", cerr)
+		}
+	}
+	if q.getGameByIdStmt != nil {
+		if cerr := q.getGameByIdStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getGameByIdStmt: %w", cerr)
+		}
+	}
+	if q.getGamesStmt != nil {
+		if cerr := q.getGamesStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getGamesStmt: %w", cerr)
+		}
+	}
+	if q.getTotalGamesStmt != nil {
+		if cerr := q.getTotalGamesStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getTotalGamesStmt: %w", cerr)
+		}
+	}
 	if q.getUserByIDStmt != nil {
 		if cerr := q.getUserByIDStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getUserByIDStmt: %w", cerr)
+		}
+	}
+	if q.getUserByUsernameStmt != nil {
+		if cerr := q.getUserByUsernameStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getUserByUsernameStmt: %w", cerr)
+		}
+	}
+	if q.updateGameByIdStmt != nil {
+		if cerr := q.updateGameByIdStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateGameByIdStmt: %w", cerr)
 		}
 	}
 	return err
@@ -74,15 +130,29 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db              DBTX
-	tx              *sql.Tx
-	getUserByIDStmt *sql.Stmt
+	db                    DBTX
+	tx                    *sql.Tx
+	createGameStmt        *sql.Stmt
+	createUserStmt        *sql.Stmt
+	getGameByIdStmt       *sql.Stmt
+	getGamesStmt          *sql.Stmt
+	getTotalGamesStmt     *sql.Stmt
+	getUserByIDStmt       *sql.Stmt
+	getUserByUsernameStmt *sql.Stmt
+	updateGameByIdStmt    *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
-		db:              tx,
-		tx:              tx,
-		getUserByIDStmt: q.getUserByIDStmt,
+		db:                    tx,
+		tx:                    tx,
+		createGameStmt:        q.createGameStmt,
+		createUserStmt:        q.createUserStmt,
+		getGameByIdStmt:       q.getGameByIdStmt,
+		getGamesStmt:          q.getGamesStmt,
+		getTotalGamesStmt:     q.getTotalGamesStmt,
+		getUserByIDStmt:       q.getUserByIDStmt,
+		getUserByUsernameStmt: q.getUserByUsernameStmt,
+		updateGameByIdStmt:    q.updateGameByIdStmt,
 	}
 }

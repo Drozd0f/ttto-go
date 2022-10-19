@@ -3,9 +3,17 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/Drozd0f/ttto-go/db"
+)
+
+const uniqueConstraintCode = "23505"
+
+var (
+	ErrUniqueConstraint = errors.New("unique constraint")
+	ErrNoResult         = errors.New("no result")
 )
 
 type Repository struct {

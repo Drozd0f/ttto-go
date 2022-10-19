@@ -5,8 +5,37 @@
 package db
 
 import (
+	"database/sql"
+
 	"github.com/google/uuid"
+	"github.com/tabbed/pqtype"
 )
+
+type Game struct {
+	ID              uuid.UUID             `json:"id"`
+	OwnerID         uuid.UUID             `json:"owner_id"`
+	OpponentID      uuid.NullUUID         `json:"opponent_id"`
+	CurrentPlayerID uuid.NullUUID         `json:"current_player_id"`
+	StepCount       int32                 `json:"step_count"`
+	WinnerID        uuid.NullUUID         `json:"winner_id"`
+	Field           pqtype.NullRawMessage `json:"field"`
+	CurrentState    int16                 `json:"current_state"`
+}
+
+type GamesWithUsername struct {
+	ID                uuid.UUID             `json:"id"`
+	OwnerID           uuid.UUID             `json:"owner_id"`
+	OpponentID        uuid.NullUUID         `json:"opponent_id"`
+	CurrentPlayerID   uuid.NullUUID         `json:"current_player_id"`
+	StepCount         int32                 `json:"step_count"`
+	WinnerID          uuid.NullUUID         `json:"winner_id"`
+	Field             pqtype.NullRawMessage `json:"field"`
+	CurrentState      int16                 `json:"current_state"`
+	OwnerName         sql.NullString        `json:"owner_name"`
+	OpponentName      sql.NullString        `json:"opponent_name"`
+	CurrentPlayerName sql.NullString        `json:"current_player_name"`
+	WinnerName        sql.NullString        `json:"winner_name"`
+}
 
 type User struct {
 	ID       uuid.UUID `json:"id"`

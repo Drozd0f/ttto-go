@@ -30,6 +30,10 @@ func New(s *service.Service, c *conf.Config) *Server {
 func (s *Server) RegisterHandlers() {
 	v1 := s.Group("/api/v1")
 	v1.GET("/ping", s.Ping)
+
+	s.registerAuthHandlers(v1)
+	s.registerGameHandlers(v1)
+
 	v1.GET("/users/:userId", s.GetUser)
-	v1.POST("/reg", s.Reg)
+
 }
