@@ -70,6 +70,10 @@ func (s *Server) login(c *gin.Context) {
 			c.JSON(http.StatusNotFound, gin.H{
 				"message": "user not exist",
 			})
+		case errors.Is(err, models.ErrInvalidData):
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "invalid data",
+			})
 		default:
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"message": err.Error(),

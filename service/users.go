@@ -14,6 +14,7 @@ import (
 var ErrUserNotFound = errors.New("user not found")
 
 func (s *Service) GetUserByID(ctx context.Context, userId string) (models.User, error) {
+	fmt.Println("in service", ctx.Value("user"))
 	uId, err := uuid.Parse(userId)
 	if err != nil {
 		return models.User{}, ErrInvalidId
@@ -29,7 +30,7 @@ func (s *Service) GetUserByID(ctx context.Context, userId string) (models.User, 
 	}
 
 	return models.User{
-		Name:     u.Username,
+		Username: u.Username,
 		Password: u.Password,
 	}, nil
 }

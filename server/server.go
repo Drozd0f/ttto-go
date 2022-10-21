@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/Drozd0f/ttto-go/conf"
+	"github.com/Drozd0f/ttto-go/server/middleware"
 	"github.com/Drozd0f/ttto-go/service"
 )
 
@@ -11,6 +12,7 @@ import (
 type Server struct {
 	*gin.Engine
 	service *service.Service
+	c       *conf.Config
 }
 
 func New(s *service.Service, c *conf.Config) *Server {
@@ -21,6 +23,7 @@ func New(s *service.Service, c *conf.Config) *Server {
 	serv := &Server{
 		Engine:  gin.Default(),
 		service: s,
+		c:       c,
 	}
 	serv.RegisterHandlers()
 
@@ -28,12 +31,12 @@ func New(s *service.Service, c *conf.Config) *Server {
 }
 
 func (s *Server) RegisterHandlers() {
-	v1 := s.Group("/api/v1")
+	v1 := s.Group("/api/v1", middleware.Auth(s.c.Secret))
 	v1.GET("/ping", s.Ping)
 
 	s.registerAuthHandlers(v1)
 	s.registerGameHandlers(v1)
 
-	v1.GET("/users/:userId", s.GetUser)
+	v1.GET("/users/:userId", middleware.AuthRequired(), s.GetUser)
 
 }

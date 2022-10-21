@@ -15,7 +15,7 @@ import (
 func (r *Repository) CreateUser(ctx context.Context, u *models.User) error {
 	err := r.q.CreateUser(ctx, db.CreateUserParams{
 		ID:       uuid.New(),
-		Username: u.Name,
+		Username: u.Username,
 		Password: u.Password,
 	})
 	if err != nil {
@@ -33,7 +33,7 @@ func (r *Repository) CreateUser(ctx context.Context, u *models.User) error {
 }
 
 func (r *Repository) GetUserByName(ctx context.Context, u *models.User) (db.User, error) {
-	dbUser, err := r.q.GetUserByUsername(ctx, u.Name)
+	dbUser, err := r.q.GetUserByUsername(ctx, u.Username)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return db.User{}, ErrNoResult

@@ -2,7 +2,10 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
+
+	"github.com/golang-jwt/jwt/v4"
 
 	"github.com/Drozd0f/ttto-go/models"
 )
@@ -10,6 +13,10 @@ import (
 func (s *Service) Reg(ctx context.Context, u *models.User) error {
 	if err := u.Validate(); err != nil {
 		return err
+	}
+
+	if err := u.EncryptPassword(); err != nil {
+		return fmt.Errorf("user encrypt password: %w", err)
 	}
 
 	if err := s.r.CreateUser(ctx, u); err != nil {
@@ -29,6 +36,22 @@ func (s *Service) Login(ctx context.Context, u *models.User) (string, error) {
 		return "", fmt.Errorf("repository get user: %w", err)
 	}
 
-	fmt.Println(storUser) // t, err := tokenGenerate(storUser)
-	return "Token", nil
+	if err = u.CheckPassword(storUser.Password); err != nil {
+		if errors.Is(err, models.ErrInvalidData) {
+			return "", models.ErrInvalidData
+		}
+		return "", fmt.Errorf("user check password: %w", err)
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"ID":       storUser.ID,
+		"Username": storUser.Username,
+	})
+
+	tokenString, err := token.SignedString([]byte(s.c.Secret))
+	if err != nil {
+		return "", fmt.Errorf("generate token: %w", err)
+	}
+
+	return tokenString, nil
 }

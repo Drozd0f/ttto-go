@@ -25,7 +25,7 @@ func runServer(c *cli.Context) error {
 		return fmt.Errorf("repository new: %w", err)
 	}
 
-	s := service.New(r)
+	s := service.New(r, cfg)
 	serv := server.New(s, cfg)
 
 	if err = serv.Run(cfg.Addr); err != nil {

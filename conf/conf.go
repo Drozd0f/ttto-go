@@ -7,9 +7,10 @@ import (
 )
 
 type Config struct {
-	DBURI string
-	Addr  string
-	Debug bool
+	DBURI  string
+	Addr   string
+	Debug  bool
+	Secret string
 }
 
 func New() (*Config, error) {
