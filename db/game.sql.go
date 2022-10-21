@@ -14,7 +14,7 @@ import (
 )
 
 const createGame = `-- name: CreateGame :one
-WITH g AS ( INSERT INTO games (owner_id) VALUES ($1) RETURNING id, owner_id, opponent_id, current_player_id, step_count, winner_id, field, current_state )
+WITH g AS ( INSERT INTO games (id, owner_id) VALUES ($1, $2) RETURNING id, owner_id, opponent_id, current_player_id, step_count, winner_id, field, current_state )
 SELECT
     g.id, g.owner_id, g.opponent_id, g.current_player_id, g.step_count, g.winner_id, g.field, g.current_state,
     ow.username AS owner_name,
@@ -27,6 +27,11 @@ LEFT JOIN users op ON op.id = g.opponent_id
 LEFT JOIN users win ON win.id = g.winner_id
 LEFT JOIN users cp ON cp.id = g.current_player_id
 `
+
+type CreateGameParams struct {
+	ID      uuid.UUID `json:"id"`
+	OwnerID uuid.UUID `json:"owner_id"`
+}
 
 type CreateGameRow struct {
 	ID                uuid.UUID             `json:"id"`
@@ -43,8 +48,8 @@ type CreateGameRow struct {
 	CurrentPlayerName sql.NullString        `json:"current_player_name"`
 }
 
-func (q *Queries) CreateGame(ctx context.Context, ownerID uuid.UUID) (CreateGameRow, error) {
-	row := q.queryRow(ctx, q.createGameStmt, createGame, ownerID)
+func (q *Queries) CreateGame(ctx context.Context, arg CreateGameParams) (CreateGameRow, error) {
+	row := q.queryRow(ctx, q.createGameStmt, createGame, arg.ID, arg.OwnerID)
 	var i CreateGameRow
 	err := row.Scan(
 		&i.ID,

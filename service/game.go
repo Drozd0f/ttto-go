@@ -8,14 +8,15 @@ import (
 	"github.com/Drozd0f/ttto-go/models"
 )
 
-// func (s *Service) CreateGame(ctx context.Context) (models.GameWithUsername, error) {
-// 	g, err := s.r.CreateGame(ctx)
-// 	if err != nil {
-// 		return models.GameWithUsername{}, fmt.Errorf("repository create game: %w", err)
-// 	}
+func (s *Service) CreateGame(ctx context.Context) (models.GameWithUsername, error) {
+	u := ctx.Value("user").(models.User)
+	g, err := s.r.CreateGame(ctx, u.ID)
+	if err != nil {
+		return models.GameWithUsername{}, fmt.Errorf("repository create game: %w", err)
+	}
 
-// 	return *models.NewGameWithUsernameFromDB(g), nil
-// }
+	return *models.NewGameWithUsernameFromDB(g), nil
+}
 
 func (s *Service) GetGames(ctx context.Context, v url.Values) ([]models.GameWithUsername, error) {
 	storGames, err := s.r.GetGames(ctx, models.NewPaginatorFromQuery(v))

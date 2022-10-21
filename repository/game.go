@@ -10,7 +10,10 @@ import (
 )
 
 func (r *Repository) CreateGame(ctx context.Context, ownerID uuid.UUID) (db.CreateGameRow, error) {
-	g, err := r.q.CreateGame(ctx, ownerID)
+	g, err := r.q.CreateGame(ctx, db.CreateGameParams{
+		ID:      uuid.New(),
+		OwnerID: ownerID,
+	})
 	if err != nil {
 		return db.CreateGameRow{}, fmt.Errorf("create game: %w", err)
 	}

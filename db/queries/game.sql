@@ -1,5 +1,5 @@
 -- name: CreateGame :one
-WITH g AS ( INSERT INTO games (owner_id) VALUES ($1) RETURNING * )
+WITH g AS ( INSERT INTO games (id, owner_id) VALUES ($1, $2) RETURNING * )
 SELECT
     g.*,
     ow.username AS owner_name,

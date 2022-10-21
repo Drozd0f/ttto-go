@@ -7,6 +7,7 @@ import (
 	"github.com/Drozd0f/ttto-go/models"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/google/uuid"
 )
 
 func AuthRequired() gin.HandlerFunc {
@@ -32,11 +33,15 @@ func Auth(secret string) gin.HandlerFunc {
 			return []byte(secret), nil
 		})
 		if err == nil {
-			ctx.Request = ctx.Request.WithContext(context.WithValue(ctx.Request.Context(), "user", models.User{
-				ID:       claims["ID"].(string),
-				Username: claims["Username"].(string),
-			}))
+			id, err := uuid.Parse(claims["ID"].(string))
+			if err == nil {
+				ctx.Request = ctx.Request.WithContext(context.WithValue(ctx.Request.Context(), "user", models.User{
+					ID:       id,
+					Username: claims["Username"].(string),
+				}))
+			}
 		}
+
 		ctx.Next()
 	}
 }

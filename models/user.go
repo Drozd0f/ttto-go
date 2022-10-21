@@ -5,15 +5,16 @@ import (
 	"fmt"
 
 	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
 var ErrInvalidData = errors.New("invalid data")
 
 type User struct {
-	ID       string `json:"id"`
-	Username string `json:"username"`
-	Password string `json:"password"`
+	ID       uuid.UUID `json:"id"`
+	Username string    `json:"username"`
+	Password string    `json:"password"`
 }
 
 func (u *User) Validate() error {
