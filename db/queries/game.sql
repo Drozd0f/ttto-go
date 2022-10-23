@@ -4,8 +4,8 @@ SELECT
     g.*,
     ow.username AS owner_name,
     op.username AS opponent_name,
-    win.username AS winner_name,
-    cp.username AS current_player_name
+    cp.username AS current_player_name,
+    win.username AS winner_name
 FROM g
 LEFT JOIN users ow ON ow.id = g.owner_id
 LEFT JOIN users op ON op.id = g.opponent_id

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"math"
 	"net/url"
 	"strconv"
 )
@@ -12,8 +13,14 @@ const (
 )
 
 type Paginator struct {
-	Page  int32
-	Limit int32
+	Page       int32 `json:"page"`
+	Limit      int32 `json:"limit"`
+	TotalPages int64 `json:"total_pages"`
+}
+
+type PaginationGameSlice struct {
+	Games     GameSlice `json:"games"`
+	Paginator Paginator `json:"paginator"`
 }
 
 func NewPaginatorFromQuery(v url.Values) Paginator {
@@ -38,4 +45,15 @@ func NewPaginatorFromQuery(v url.Values) Paginator {
 
 func (p *Paginator) Offset() int32 {
 	return (p.Page - 1) * p.Limit
+}
+
+func (p *Paginator) SetTotalPages(countGames int64) {
+	p.TotalPages = int64(math.Ceil(float64(countGames) / float64(p.Limit)))
+}
+
+func NewPaginationGameSlice(g GameSlice, p Paginator) PaginationGameSlice {
+	return PaginationGameSlice{
+		Games:     g,
+		Paginator: p,
+	}
 }

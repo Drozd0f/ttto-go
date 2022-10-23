@@ -8,9 +8,9 @@ package db
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 
 	"github.com/google/uuid"
-	"github.com/tabbed/pqtype"
 )
 
 const createGame = `-- name: CreateGame :one
@@ -19,8 +19,8 @@ SELECT
     g.id, g.owner_id, g.opponent_id, g.current_player_id, g.step_count, g.winner_id, g.field, g.current_state,
     ow.username AS owner_name,
     op.username AS opponent_name,
-    win.username AS winner_name,
-    cp.username AS current_player_name
+    cp.username AS current_player_name,
+    win.username AS winner_name
 FROM g
 LEFT JOIN users ow ON ow.id = g.owner_id
 LEFT JOIN users op ON op.id = g.opponent_id
@@ -34,18 +34,18 @@ type CreateGameParams struct {
 }
 
 type CreateGameRow struct {
-	ID                uuid.UUID             `json:"id"`
-	OwnerID           uuid.UUID             `json:"owner_id"`
-	OpponentID        uuid.NullUUID         `json:"opponent_id"`
-	CurrentPlayerID   uuid.NullUUID         `json:"current_player_id"`
-	StepCount         int32                 `json:"step_count"`
-	WinnerID          uuid.NullUUID         `json:"winner_id"`
-	Field             pqtype.NullRawMessage `json:"field"`
-	CurrentState      int16                 `json:"current_state"`
-	OwnerName         sql.NullString        `json:"owner_name"`
-	OpponentName      sql.NullString        `json:"opponent_name"`
-	WinnerName        sql.NullString        `json:"winner_name"`
-	CurrentPlayerName sql.NullString        `json:"current_player_name"`
+	ID                uuid.UUID       `json:"id"`
+	OwnerID           uuid.UUID       `json:"owner_id"`
+	OpponentID        uuid.NullUUID   `json:"opponent_id"`
+	CurrentPlayerID   uuid.NullUUID   `json:"current_player_id"`
+	StepCount         int32           `json:"step_count"`
+	WinnerID          uuid.NullUUID   `json:"winner_id"`
+	Field             json.RawMessage `json:"field"`
+	CurrentState      int16           `json:"current_state"`
+	OwnerName         sql.NullString  `json:"owner_name"`
+	OpponentName      sql.NullString  `json:"opponent_name"`
+	CurrentPlayerName sql.NullString  `json:"current_player_name"`
+	WinnerName        sql.NullString  `json:"winner_name"`
 }
 
 func (q *Queries) CreateGame(ctx context.Context, arg CreateGameParams) (CreateGameRow, error) {
@@ -62,8 +62,8 @@ func (q *Queries) CreateGame(ctx context.Context, arg CreateGameParams) (CreateG
 		&i.CurrentState,
 		&i.OwnerName,
 		&i.OpponentName,
-		&i.WinnerName,
 		&i.CurrentPlayerName,
+		&i.WinnerName,
 	)
 	return i, err
 }
@@ -164,14 +164,14 @@ WHERE id=$1
 `
 
 type UpdateGameByIdParams struct {
-	ID              uuid.UUID             `json:"id"`
-	OwnerID         uuid.UUID             `json:"owner_id"`
-	OpponentID      uuid.NullUUID         `json:"opponent_id"`
-	CurrentPlayerID uuid.NullUUID         `json:"current_player_id"`
-	StepCount       int32                 `json:"step_count"`
-	WinnerID        uuid.NullUUID         `json:"winner_id"`
-	Field           pqtype.NullRawMessage `json:"field"`
-	CurrentState    int16                 `json:"current_state"`
+	ID              uuid.UUID       `json:"id"`
+	OwnerID         uuid.UUID       `json:"owner_id"`
+	OpponentID      uuid.NullUUID   `json:"opponent_id"`
+	CurrentPlayerID uuid.NullUUID   `json:"current_player_id"`
+	StepCount       int32           `json:"step_count"`
+	WinnerID        uuid.NullUUID   `json:"winner_id"`
+	Field           json.RawMessage `json:"field"`
+	CurrentState    int16           `json:"current_state"`
 }
 
 func (q *Queries) UpdateGameById(ctx context.Context, arg UpdateGameByIdParams) error {

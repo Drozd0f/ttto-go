@@ -10,7 +10,6 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lib/pq v1.10.7
-	github.com/tabbed/pqtype v0.1.1
 	github.com/urfave/cli/v2 v2.20.2
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
 )

@@ -36,7 +36,4 @@ func (s *Server) RegisterHandlers() {
 
 	s.registerAuthHandlers(v1)
 	s.registerGameHandlers(v1)
-
-	v1.GET("/users/:userId", middleware.AuthRequired(), s.GetUser)
-
 }

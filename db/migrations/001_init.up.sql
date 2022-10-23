@@ -11,6 +11,6 @@ CREATE TABLE IF NOT EXISTS games (
     current_player_id UUID REFERENCES users(id),
     step_count INTEGER NOT NULL DEFAULT 0,
     winner_id UUID REFERENCES users(id),
-    field json DEFAULT '[["", "", ""], ["", "", ""], ["", "", ""]]',
+    field json NOT NULL DEFAULT '[["", "", ""], ["", "", ""], ["", "", ""]]',
     current_state smallint NOT NULL DEFAULT 0
 );
