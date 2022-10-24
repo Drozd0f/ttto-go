@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	StatePending = iota
+	StatePending int16 = iota
 	StateInGame
 	StateDone
 )
@@ -22,15 +22,15 @@ const (
 	OpponentMark = "0"
 )
 
-var winCondition = [8][3]int{
-	{0, 1, 2},
-	{3, 4, 5},
-	{6, 7, 8},
-	{0, 3, 6},
-	{1, 4, 7},
-	{2, 5, 8},
-	{0, 4, 8},
-	{2, 4, 6},
+var winCondition = [8][3]Coord{
+	{Coord{0, 0}, Coord{0, 1}, Coord{0, 2}},
+	{Coord{1, 0}, Coord{1, 1}, Coord{1, 2}},
+	{Coord{2, 0}, Coord{2, 1}, Coord{2, 2}},
+	{Coord{0, 0}, Coord{1, 1}, Coord{2, 2}},
+	{Coord{0, 2}, Coord{1, 1}, Coord{2, 0}},
+	{Coord{0, 0}, Coord{1, 0}, Coord{2, 0}},
+	{Coord{0, 1}, Coord{1, 1}, Coord{2, 1}},
+	{Coord{0, 2}, Coord{1, 2}, Coord{2, 2}},
 }
 
 var ErrCellOccupied = errors.New("cell is already occupied")
@@ -182,14 +182,13 @@ func (g *Game) SetOpponent(o User) {
 	g.CurrentPlayer = g.Opponent
 }
 
-func (g *Game) Step(coords [2]int) error {
-	row, col := coords[0], coords[1]
-	if g.Field[row][col] != "" {
+func (g *Game) MakeStep(coord Coord) error {
+	if g.Field[coord.X][coord.Y] != "" {
 		return ErrCellOccupied
 	}
 
 	fieldSize := math.Pow(float64(len(g.Field)), 2.0)
-	g.Field[row][col] = g.playerMark(g.CurrentPlayer.Player.ID)
+	g.Field[coord.X][coord.Y] = g.playerMark(g.CurrentPlayer.Player.ID)
 	g.StepCount++
 	if g.StepCount >= int32(math.Ceil(fieldSize/2)) && g.winCheck() {
 		g.Winner = g.CurrentPlayer
@@ -211,35 +210,24 @@ func (g *Game) playerMark(pID uuid.UUID) string {
 	return OpponentMark
 }
 
-func (g *Game) expandField() []string {
-	fieldSize := len(g.Field)
-	ef := make([]string, 0, fieldSize*fieldSize)
-	for _, row := range g.Field {
-		for _, col := range row {
-			ef = append(ef, col)
-		}
-	}
-	return ef
-}
-
 func (g *Game) winCheck() bool {
-	ef := g.expandField()
 	isWin := false
 outer_loop:
 	for _, cond := range winCondition {
-		for _, cellIdx := range cond {
-			if g.CurrentPlayer.Player.Mark != ef[cellIdx] {
+		for _, coord := range cond {
+			if g.CurrentPlayer.Player.Mark != g.Field[coord.X][coord.Y] {
 				continue outer_loop
 			}
 		}
 		isWin = true
 		break
 	}
+
 	return isWin
 }
 
 func (g *Game) invertPlayer() {
-	if g.CurrentPlayer.Player.ID == g.Owner.ID {
+	if g.CurrentPlayer.Player.ID != g.Owner.ID {
 		g.CurrentPlayer.Player = g.Owner
 		return
 	}
