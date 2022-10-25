@@ -34,6 +34,8 @@ func New(s *service.Service, c *conf.Config) *Server {
 }
 
 func (s *Server) RegisterHandlers() {
+	s.Use(middleware.ErrorHandler)
+
 	v1 := s.Group("/api/v1", middleware.Auth(s.c.Secret))
 	v1.GET("/ping", s.ping)
 

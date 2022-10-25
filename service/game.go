@@ -16,11 +16,13 @@ import (
 )
 
 var (
-	ErrGameNotFound  = errors.New("game not found")
-	ErrInvalidState  = errors.New("invalid state")
-	ErrUserInGame    = errors.New("user already in game")
-	ErrUserNotInGame = errors.New("user not in game")
-	ErrNotYourTurn   = errors.New("not your turn")
+	ErrGameInvalidId     = errors.New("invalid id")
+	ErrGameNotFound      = errors.New("game not found")
+	ErrGameInvalidState  = errors.New("invalid state")
+	ErrGameUserExists    = errors.New("user already in game")
+	ErrGameUserNotExists = errors.New("user not in game")
+	ErrGameNotTurnUser   = errors.New("not your turn")
+	ErrGameCellOccupied  = errors.New("cell is already occupied")
 )
 
 func (s *Service) CreateGame(ctx context.Context) (models.Game, error) {
@@ -36,7 +38,7 @@ func (s *Service) CreateGame(ctx context.Context) (models.Game, error) {
 func (s *Service) GetGameByID(ctx context.Context, gameID string) (*models.Game, error) {
 	gID, err := uuid.Parse(gameID)
 	if err != nil {
-		return nil, ErrInvalidId
+		return nil, ErrGameInvalidId
 	}
 
 	g, err := s.r.GetGameByID(ctx, gID)
@@ -89,7 +91,7 @@ func (s *Service) LoginGame(ctx context.Context, gameID string) (*models.Game, e
 
 	u := ctx.Value("user").(models.User)
 	if g.Owner.ID == u.ID {
-		return nil, ErrUserInGame
+		return nil, ErrGameUserExists
 	}
 
 	g.SetOpponent(u)
@@ -113,15 +115,15 @@ func (s *Service) MakeStep(ctx context.Context, gameID string, c models.Coord) (
 
 	u := ctx.Value("user").(models.User)
 	if !g.UserInGame(u) {
-		return nil, ErrUserNotInGame
+		return nil, ErrGameUserNotExists
 	}
 
 	if g.CurrentPlayer.Player.ID != u.ID {
-		return nil, ErrNotYourTurn
+		return nil, ErrGameNotTurnUser
 	}
 
 	if err = g.MakeStep(c); err != nil {
-		return nil, err
+		return nil, ErrGameCellOccupied
 	}
 
 	if err = s.UpdateGame(ctx, g); err != nil {
@@ -174,7 +176,7 @@ func (s *Service) getGameWithState(ctx context.Context, gameID string, state int
 	}
 
 	if g.CurrentState != state {
-		return nil, ErrInvalidState
+		return nil, ErrGameNotTurnUser
 	}
 
 	return g, nil

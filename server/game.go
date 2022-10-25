@@ -2,16 +2,13 @@ package server
 
 import (
 	"context"
-	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/gorilla/websocket"
 
 	"github.com/Drozd0f/ttto-go/models"
 	"github.com/Drozd0f/ttto-go/server/middleware"
-	"github.com/Drozd0f/ttto-go/service"
 )
 
 func (s *Server) registerGameHandlers(g *gin.RouterGroup) {
@@ -29,9 +26,17 @@ func (s *Server) registerGameHandlers(g *gin.RouterGroup) {
 func (s *Server) createGame(c *gin.Context) {
 	g, err := s.service.CreateGame(c.Request.Context())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": http.StatusText(http.StatusInternalServerError),
-		})
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, g)
+}
+
+func (s *Server) getGame(c *gin.Context) {
+	g, err := s.service.GetGameByID(c.Request.Context(), c.Param("gameID"))
+	if err != nil {
+		c.Error(err)
 		return
 	}
 
@@ -41,36 +46,11 @@ func (s *Server) createGame(c *gin.Context) {
 func (s *Server) getGames(c *gin.Context) {
 	games, err := s.service.GetGames(c.Request.Context(), c.Request.URL.Query())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": http.StatusText(http.StatusInternalServerError),
-		})
+		c.Error(err)
 		return
 	}
 
 	c.JSON(http.StatusOK, games)
-}
-
-func (s *Server) getGame(c *gin.Context) {
-	g, err := s.service.GetGameByID(c.Request.Context(), c.Param("gameID"))
-	if err != nil {
-		switch {
-		case errors.Is(err, service.ErrInvalidId):
-			c.JSON(http.StatusBadRequest, gin.H{
-				"message": err.Error(),
-			})
-		case errors.Is(err, service.ErrGameNotFound):
-			c.JSON(http.StatusNotFound, gin.H{
-				"message": err.Error(),
-			})
-		default:
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": http.StatusText(http.StatusInternalServerError),
-			})
-		}
-		return
-	}
-
-	c.JSON(http.StatusOK, g)
 }
 
 func (s *Server) makeStep(c *gin.Context) {
@@ -84,30 +64,7 @@ func (s *Server) makeStep(c *gin.Context) {
 	}
 	g, err := s.service.MakeStep(c.Request.Context(), c.Param("gameID"), coord)
 	if err != nil {
-		var validErr validation.Errors
-		switch {
-		case errors.As(err, &validErr):
-			c.JSON(http.StatusBadRequest, err)
-		case errors.Is(err, service.ErrInvalidId),
-			errors.Is(err, service.ErrInvalidState):
-			c.JSON(http.StatusBadRequest, gin.H{
-				"message": err.Error(),
-			})
-		case errors.Is(err, service.ErrGameNotFound):
-			c.JSON(http.StatusNotFound, gin.H{
-				"message": err.Error(),
-			})
-		case errors.Is(err, service.ErrUserNotInGame),
-			errors.Is(err, service.ErrNotYourTurn),
-			errors.Is(err, models.ErrCellOccupied):
-			c.JSON(http.StatusForbidden, gin.H{
-				"message": err.Error(),
-			})
-		default:
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": http.StatusText(http.StatusInternalServerError),
-			})
-		}
+		c.Error(err)
 		return
 	}
 
@@ -117,28 +74,7 @@ func (s *Server) makeStep(c *gin.Context) {
 func (s *Server) loginGame(c *gin.Context) {
 	g, err := s.service.LoginGame(c.Request.Context(), c.Param("gameID"))
 	if err != nil {
-		switch {
-		case errors.Is(err, service.ErrInvalidId):
-			c.JSON(http.StatusBadRequest, gin.H{
-				"message": err.Error(),
-			})
-		case errors.Is(err, service.ErrGameNotFound):
-			c.JSON(http.StatusNotFound, gin.H{
-				"message": err.Error(),
-			})
-		case errors.Is(err, service.ErrInvalidState):
-			c.JSON(http.StatusNotFound, gin.H{
-				"message": err.Error(),
-			})
-		case errors.Is(err, service.ErrUserInGame):
-			c.JSON(http.StatusConflict, gin.H{
-				"message": err.Error(),
-			})
-		default:
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": http.StatusText(http.StatusInternalServerError),
-			})
-		}
+		c.Error(err)
 		return
 	}
 
@@ -152,20 +88,7 @@ func (s *Server) ws(c *gin.Context) {
 
 	_, err := s.service.GetGameByID(ctx, gameID)
 	if err != nil {
-		switch {
-		case errors.Is(err, service.ErrInvalidId):
-			c.JSON(http.StatusBadRequest, gin.H{
-				"message": err.Error(),
-			})
-		case errors.Is(err, service.ErrGameNotFound):
-			c.JSON(http.StatusNotFound, gin.H{
-				"message": err.Error(),
-			})
-		default:
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": http.StatusText(http.StatusInternalServerError),
-			})
-		}
+		c.Error(err)
 		return
 	}
 
