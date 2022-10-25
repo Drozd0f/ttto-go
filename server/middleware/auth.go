@@ -11,6 +11,8 @@ import (
 	"github.com/Drozd0f/ttto-go/models"
 )
 
+type UserContextKey string
+
 func AuthRequired() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		if ctx.Request.Context().Value("user") == nil {
@@ -36,7 +38,7 @@ func Auth(secret string) gin.HandlerFunc {
 		if err == nil {
 			id, err := uuid.Parse(claims["ID"].(string))
 			if err == nil {
-				ctx.Request = ctx.Request.WithContext(context.WithValue(ctx.Request.Context(), "user", models.User{
+				ctx.Request = ctx.Request.WithContext(context.WithValue(ctx.Request.Context(), UserContextKey("user"), models.User{
 					ID:       id,
 					Username: claims["Username"].(string),
 				}))
