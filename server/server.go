@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 
 	"github.com/Drozd0f/ttto-go/conf"
 	"github.com/Drozd0f/ttto-go/server/middleware"
@@ -11,8 +12,9 @@ import (
 // serv -> service -> db
 type Server struct {
 	*gin.Engine
-	service *service.Service
-	c       *conf.Config
+	upgrader websocket.Upgrader
+	service  *service.Service
+	c        *conf.Config
 }
 
 func New(s *service.Service, c *conf.Config) *Server {
@@ -21,9 +23,10 @@ func New(s *service.Service, c *conf.Config) *Server {
 	}
 
 	serv := &Server{
-		Engine:  gin.Default(),
-		service: s,
-		c:       c,
+		Engine:   gin.Default(),
+		upgrader: websocket.Upgrader{},
+		service:  s,
+		c:        c,
 	}
 	serv.RegisterHandlers()
 
@@ -32,7 +35,7 @@ func New(s *service.Service, c *conf.Config) *Server {
 
 func (s *Server) RegisterHandlers() {
 	v1 := s.Group("/api/v1", middleware.Auth(s.c.Secret))
-	v1.GET("/ping", s.Ping)
+	v1.GET("/ping", s.ping)
 
 	s.registerAuthHandlers(v1)
 	s.registerGameHandlers(v1)

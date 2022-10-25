@@ -7,8 +7,9 @@ import (
 	"math"
 	"math/rand"
 
-	"github.com/Drozd0f/ttto-go/db"
 	"github.com/google/uuid"
+
+	"github.com/Drozd0f/ttto-go/db"
 )
 
 const (
@@ -201,6 +202,10 @@ func (g *Game) MakeStep(coord Coord) error {
 		g.CurrentState = StateDone
 	}
 	return nil
+}
+
+func (g *Game) UserInGame(u User) bool {
+	return g.Owner.ID == u.ID || g.Opponent.Player.ID == u.ID
 }
 
 func (g *Game) playerMark(pID uuid.UUID) string {

@@ -6,10 +6,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/Drozd0f/ttto-go/db"
-	"github.com/Drozd0f/ttto-go/models"
 	"github.com/google/uuid"
 	"github.com/lib/pq"
+
+	"github.com/Drozd0f/ttto-go/db"
+	"github.com/Drozd0f/ttto-go/models"
 )
 
 func (r *Repository) CreateUser(ctx context.Context, u *models.User) error {

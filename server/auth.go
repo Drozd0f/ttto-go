@@ -4,10 +4,11 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/Drozd0f/ttto-go/models"
-	"github.com/Drozd0f/ttto-go/repository"
 	"github.com/gin-gonic/gin"
 	validation "github.com/go-ozzo/ozzo-validation"
+
+	"github.com/Drozd0f/ttto-go/models"
+	"github.com/Drozd0f/ttto-go/repository"
 )
 
 func (s *Server) registerAuthHandlers(g *gin.RouterGroup) {

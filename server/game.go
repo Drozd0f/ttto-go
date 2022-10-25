@@ -1,14 +1,17 @@
 package server
 
 import (
+	"context"
 	"errors"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/gorilla/websocket"
 
 	"github.com/Drozd0f/ttto-go/models"
 	"github.com/Drozd0f/ttto-go/server/middleware"
 	"github.com/Drozd0f/ttto-go/service"
-	"github.com/gin-gonic/gin"
-	validation "github.com/go-ozzo/ozzo-validation"
 )
 
 func (s *Server) registerGameHandlers(g *gin.RouterGroup) {
@@ -18,6 +21,7 @@ func (s *Server) registerGameHandlers(g *gin.RouterGroup) {
 		gameG.GET("", s.getGames)
 		gameG.GET("/:gameID", s.getGame)
 		gameG.PATCH("/:gameID", middleware.AuthRequired(), s.makeStep)
+		gameG.GET("/:gameID/ws", s.ws)
 		gameG.PATCH("/:gameID/login", middleware.AuthRequired(), s.loginGame)
 	}
 }
@@ -84,7 +88,8 @@ func (s *Server) makeStep(c *gin.Context) {
 		switch {
 		case errors.As(err, &validErr):
 			c.JSON(http.StatusBadRequest, err)
-		case errors.Is(err, service.ErrInvalidId):
+		case errors.Is(err, service.ErrInvalidId),
+			errors.Is(err, service.ErrInvalidState):
 			c.JSON(http.StatusBadRequest, gin.H{
 				"message": err.Error(),
 			})
@@ -92,15 +97,9 @@ func (s *Server) makeStep(c *gin.Context) {
 			c.JSON(http.StatusNotFound, gin.H{
 				"message": err.Error(),
 			})
-		case errors.Is(err, service.ErrInvalidState):
-			c.JSON(http.StatusNotFound, gin.H{
-				"message": err.Error(),
-			})
-		case errors.Is(err, service.ErrNotYourTurn):
-			c.JSON(http.StatusConflict, gin.H{
-				"message": err.Error(),
-			})
-		case errors.Is(err, models.ErrCellOccupied):
+		case errors.Is(err, service.ErrUserNotInGame),
+			errors.Is(err, service.ErrNotYourTurn),
+			errors.Is(err, models.ErrCellOccupied):
 			c.JSON(http.StatusForbidden, gin.H{
 				"message": err.Error(),
 			})
@@ -144,4 +143,52 @@ func (s *Server) loginGame(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, g)
+}
+
+func (s *Server) ws(c *gin.Context) {
+	gameID := c.Param("gameID")
+	ctx, cancel := context.WithCancel(c.Request.Context())
+	defer cancel()
+
+	_, err := s.service.GetGameByID(ctx, gameID)
+	if err != nil {
+		switch {
+		case errors.Is(err, service.ErrInvalidId):
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": err.Error(),
+			})
+		case errors.Is(err, service.ErrGameNotFound):
+			c.JSON(http.StatusNotFound, gin.H{
+				"message": err.Error(),
+			})
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": http.StatusText(http.StatusInternalServerError),
+			})
+		}
+		return
+	}
+
+	conn, err := s.upgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		return
+	}
+
+	defer conn.Close()
+
+	go s.service.Subscribe(ctx, conn, gameID)
+
+	for {
+		mt, msg, err := conn.ReadMessage()
+		if err != nil || mt == websocket.CloseMessage {
+			return
+		}
+		if ctx.Value("user") != nil {
+			if err = s.service.HandleWSMessage(c.Request.Context(), gameID, msg); err != nil {
+				conn.WriteMessage(websocket.TextMessage, []byte(err.Error()))
+				return
+			}
+		}
+
+	}
 }
