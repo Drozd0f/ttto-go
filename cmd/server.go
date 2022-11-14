@@ -6,12 +6,12 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/Drozd0f/ttto-go/conf"
-	"github.com/Drozd0f/ttto-go/repository"
-	"github.com/Drozd0f/ttto-go/server"
-	"github.com/Drozd0f/ttto-go/service"
+	"github.com/Drozd0f/ttto-go/monolith/repository"
+	"github.com/Drozd0f/ttto-go/monolith/server"
+	"github.com/Drozd0f/ttto-go/monolith/service"
 )
 
-func runServer(c *cli.Context) error {
+func runMonolithServer(c *cli.Context) error {
 	cfg, err := conf.New()
 	if err != nil {
 		return fmt.Errorf("conf new: %w", err)

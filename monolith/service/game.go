@@ -11,8 +11,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 
-	"github.com/Drozd0f/ttto-go/models"
-	"github.com/Drozd0f/ttto-go/repository"
+	"github.com/Drozd0f/ttto-go/monolith/models"
+	"github.com/Drozd0f/ttto-go/monolith/repository"
 )
 
 var (

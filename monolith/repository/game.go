@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Drozd0f/ttto-go/db"
-	"github.com/Drozd0f/ttto-go/models"
+	"github.com/Drozd0f/ttto-go/monolith/db"
+	"github.com/Drozd0f/ttto-go/monolith/models"
 	"github.com/google/uuid"
 )
 

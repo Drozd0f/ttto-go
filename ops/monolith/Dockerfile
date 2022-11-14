@@ -7,4 +7,4 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /ttto ./cmd
 FROM alpine:3.16.2 as prod
 
 COPY --from=base /ttto /usr/bin/ttto
-CMD ["sh", "-c", "ttto migrate && ttto run"]
+CMD ["sh", "-c", "ttto migrate-monolith && ttto run-monolith"]

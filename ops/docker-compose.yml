@@ -7,12 +7,12 @@ services:
     build: 
       target: prod
       context: ..
-      dockerfile: ops/Dockerfile
+      dockerfile: ops/monolith/Dockerfile
     depends_on:
       db:
         condition: service_healthy
     env_file:
-      - .env
+      - monolith/.env
 
   db:
     image: postgres:latest

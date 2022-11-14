@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/Drozd0f/ttto-go/db"
+	"github.com/Drozd0f/ttto-go/monolith/db"
 )
 
 const uniqueConstraintCode = "23505"

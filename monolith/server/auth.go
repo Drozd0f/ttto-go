@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/Drozd0f/ttto-go/models"
+	"github.com/Drozd0f/ttto-go/monolith/models"
 )
 
 func (s *Server) registerAuthHandlers(g *gin.RouterGroup) {

@@ -7,8 +7,8 @@ import (
 
 	"github.com/golang-jwt/jwt/v4"
 
-	"github.com/Drozd0f/ttto-go/models"
-	"github.com/Drozd0f/ttto-go/repository"
+	"github.com/Drozd0f/ttto-go/monolith/models"
+	"github.com/Drozd0f/ttto-go/monolith/repository"
 )
 
 var (

@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	validation "github.com/go-ozzo/ozzo-validation"
 
-	"github.com/Drozd0f/ttto-go/service"
+	"github.com/Drozd0f/ttto-go/monolith/service"
 )
 
 var handleErrors map[error]int = map[error]int{

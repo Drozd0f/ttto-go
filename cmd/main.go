@@ -12,12 +12,12 @@ func main() {
 		Name: "ttto",
 		Commands: []*cli.Command{
 			{
-				Name:   "run",
-				Action: runServer,
+				Name:   "run-monolith",
+				Action: runMonolithServer,
 			},
 			{
-				Name:   "migrate",
-				Action: runMigrate,
+				Name:   "migrate-monolith",
+				Action: runMonolithMigrate,
 			},
 		},
 	}

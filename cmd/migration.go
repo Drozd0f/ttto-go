@@ -11,10 +11,10 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/Drozd0f/ttto-go/conf"
-	"github.com/Drozd0f/ttto-go/db/migrations"
+	"github.com/Drozd0f/ttto-go/monolith/db/migrations"
 )
 
-func runMigrate(*cli.Context) error {
+func runMonolithMigrate(*cli.Context) error {
 	cfg, err := conf.New()
 	if err != nil {
 		return fmt.Errorf("conf new: %w", err)

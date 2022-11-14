@@ -7,8 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 
-	"github.com/Drozd0f/ttto-go/models"
-	"github.com/Drozd0f/ttto-go/server/middleware"
+	"github.com/Drozd0f/ttto-go/monolith/models"
+	"github.com/Drozd0f/ttto-go/monolith/server/middleware"
 )
 
 func (s *Server) registerGameHandlers(g *gin.RouterGroup) {
