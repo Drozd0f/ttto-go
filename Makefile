@@ -1,18 +1,15 @@
 COMPOSE ?= docker-compose -f ops/docker-compose.yml
 
+run-microservices: run-gateway run-auth
+
 run:
 	$(COMPOSE) up --build --force-recreate -d
 
+run-%:
+	$(COMPOSE) up --build --force-recreate -d $*
+
 run-monolith:
 	$(COMPOSE) up --build --force-recreate -d app
-
-run-microservices: run-gateway run-auth
-
-run-gateway:
-	$(COMPOSE) up --build --force-recreate -d gateway
-
-run-auth:
-	$(COMPOSE) up --build --force-recreate -d auth
 
 rm:
 	$(COMPOSE) rm -sfv

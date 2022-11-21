@@ -18,14 +18,15 @@ var (
 func (s *Service) CreateUser(ctx context.Context, req *auth.CreateUserRequest) error {
 	_, err := s.ac.CreateUser(ctx, req)
 
-	stat, ok := status.FromError(err)
-	if ok {
-		switch {
-		case stat.Code() == codes.InvalidArgument:
-			return ErrValidation
-		case stat.Code() == codes.AlreadyExists:
-			return ErrUserAlreadyExists
-		default:
+	if err != nil {
+		stat, ok := status.FromError(err)
+		if ok {
+			switch {
+			case stat.Code() == codes.InvalidArgument:
+				return ErrValidation
+			case stat.Code() == codes.AlreadyExists:
+				return ErrUserAlreadyExists
+			}
 			return fmt.Errorf("auth service create user: %s", stat.Message())
 		}
 	}

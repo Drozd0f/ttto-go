@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"errors"
 	"log"
 	"net/http"
 
@@ -16,14 +17,15 @@ var handleErrors map[error]int = map[error]int{
 func ErrorHandler(c *gin.Context) {
 	c.Next()
 	for _, err := range c.Errors {
-		log.Println(err)
-		status, ok := handleErrors[err]
-		log.Println("status -", status, "ok", ok)
-		if ok {
-			c.JSON(status, gin.H{
-				"message": err.Error(),
-			})
-			return
+		var e *gin.Error
+		if errors.As(err, &e) {
+			status, ok := handleErrors[e.Err]
+			if ok {
+				c.JSON(status, gin.H{
+					"message": err.Error(),
+				})
+				return
+			}
 		}
 
 		log.Println(err.Error())
