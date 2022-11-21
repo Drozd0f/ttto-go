@@ -9,15 +9,15 @@ import (
 
 func main() {
 	app := &cli.App{
-		Name: "ttto",
+		Name: "auth",
 		Commands: []*cli.Command{
 			{
-				Name:   "run-monolith",
-				Action: runMonolithServer,
+				Name:   "run",
+				Action: runAuth,
 			},
 			{
-				Name:   "migrate-monolith",
-				Action: runMonolithMigrate,
+				Name:   "migrate",
+				Action: runMigrate,
 			},
 		},
 	}

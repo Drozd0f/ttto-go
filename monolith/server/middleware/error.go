@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"errors"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -28,6 +29,7 @@ func ErrorHandler(c *gin.Context) {
 
 	var validErr validation.Errors
 	for _, err := range c.Errors {
+		log.Println(err)
 		switch {
 		case errors.As(err, &validErr):
 			c.JSON(http.StatusBadRequest, validErr)
