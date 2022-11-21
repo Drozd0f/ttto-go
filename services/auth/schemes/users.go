@@ -62,3 +62,10 @@ func UserFromCreateUserRequest(cur *auth.CreateUserRequest) *User {
 		Password: cur.Password,
 	}
 }
+
+func UserFromLoginUserRequest(lur *auth.LoginUserRequest) *User {
+	return &User{
+		Username: lur.Username,
+		Password: lur.Password,
+	}
+}

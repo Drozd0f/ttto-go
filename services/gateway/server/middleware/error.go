@@ -9,9 +9,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var handleErrors map[error]int = map[error]int{
+var handleErrors = map[error]int{
 	service.ErrValidation:        http.StatusBadRequest,
-	service.ErrUserAlreadyExists: http.StatusBadRequest,
+	service.ErrUserAlreadyExists: http.StatusConflict,
+	service.ErrUserNotExists: 	  http.StatusNotFound,
 }
 
 func ErrorHandler(c *gin.Context) {

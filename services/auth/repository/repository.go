@@ -13,6 +13,7 @@ const uniqueConstraintCode = "23505"
 
 var (
 	ErrUniqueConstraint = errors.New("unique constraint")
+	ErrNoResult = errors.New("no result")
 )
 
 type Repository struct {

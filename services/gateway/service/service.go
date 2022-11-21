@@ -1,6 +1,14 @@
 package service
 
-import "github.com/Drozd0f/ttto-go/services/gateway/clients"
+import (
+	"errors"
+
+	"github.com/Drozd0f/ttto-go/services/gateway/clients"
+)
+
+var (
+	ErrGrpcBadError = errors.New("grpc bad error")
+)
 
 type Service struct {
 	ac clients.AuthClient

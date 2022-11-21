@@ -29,6 +29,22 @@ func (s *Server) CreateUser(ctx context.Context, cur *auth.CreateUserRequest) (*
 	return &auth.CreateUserResponse{}, nil
 }
 
-//func (s *Server) LoginUser(context.Context, *auth.LoginUserRequest) (*auth.LoginUserResponse, error) {
-//
-//}
+func (s *Server) LoginUser(ctx context.Context, lur *auth.LoginUserRequest) (*auth.LoginUserResponse, error) {
+	token, err := s.service.LoginUser(ctx, schemes.UserFromLoginUserRequest(lur))
+	if err != nil {
+		var validErr validation.Errors
+		switch {
+		case errors.As(err, &validErr):
+			return nil, status.Error(codes.InvalidArgument, validErr.Error())
+		case errors.Is(err, service.ErrUserNotExists):
+			return nil, status.Error(codes.NotFound, err.Error())
+		case errors.Is(err, service.ErrUserInvalidData):
+			return nil, status.Error(codes.InvalidArgument, err.Error())
+		default:
+			return nil, status.Error(codes.Internal, err.Error())
+		}
+
+	}
+
+	return &auth.LoginUserResponse{Token: token}, nil
+}

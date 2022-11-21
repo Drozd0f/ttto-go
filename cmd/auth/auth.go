@@ -25,7 +25,7 @@ func runAuth(c *cli.Context) error {
 		return fmt.Errorf("repository new: %w", err)
 	}
 
-	s := server.New(cfg, service.New(rep))
+	s := server.New(cfg, service.New(rep, cfg))
 	g := grpc.NewServer()
 	auth.RegisterAuthServer(g, s)
 
