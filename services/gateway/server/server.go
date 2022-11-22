@@ -1,16 +1,16 @@
 package server
 
 import (
+	"github.com/Drozd0f/ttto-go/services/gateway/server/middleware"
 	"github.com/gin-gonic/gin"
 
 	"github.com/Drozd0f/ttto-go/services/gateway/conf"
-	"github.com/Drozd0f/ttto-go/services/gateway/server/middleware"
 	"github.com/Drozd0f/ttto-go/services/gateway/service"
 )
 
 type Server struct {
 	*gin.Engine
-	c          *conf.Config
+	c       *conf.Config
 	service *service.Service
 }
 
@@ -20,22 +20,23 @@ func New(c *conf.Config, service *service.Service) (*Server, error) {
 	}
 
 	s := &Server{
-		Engine:     gin.Default(),
-		c:          c,
+		Engine:  gin.Default(),
+		c:       c,
 		service: service,
 	}
-	if err := s.Engine.SetTrustedProxies(nil); err != nil {
-		return nil, err
-	}
 
-	s.RegisterHandlers()
+	s.registerMiddlewares()
+	s.registerHandlers()
 
 	return s, nil
 }
 
-func (s *Server) RegisterHandlers() {
+func (s *Server) registerMiddlewares() {
+	s.Use(middleware.LoggingHandler)
 	s.Use(middleware.ErrorHandler)
+}
 
+func (s *Server) registerHandlers() {
 	v2 := s.Group("api/v2")
 	v2.GET("/ping", s.ping)
 

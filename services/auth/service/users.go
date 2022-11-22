@@ -16,7 +16,7 @@ var (
 	ErrUserInvalidData   = errors.New("invalid data")
 )
 
-func (s *Service) CreateUser(ctx context.Context, u *schemes.User) error {
+func (s *Service) CreateUser(ctx context.Context, u schemes.User) error {
 	if err := u.Validate(); err != nil {
 		return err
 	}
@@ -35,7 +35,7 @@ func (s *Service) CreateUser(ctx context.Context, u *schemes.User) error {
 	return nil
 }
 
-func (s *Service) LoginUser(ctx context.Context, u *schemes.User) (string, error) {
+func (s *Service) LoginUser(ctx context.Context, u schemes.User) (string, error) {
 	if err := u.Validate(); err != nil {
 		return "", err
 	}

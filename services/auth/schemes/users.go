@@ -56,16 +56,16 @@ func (u *User) UserToCreateUserParam() db.CreateUserParams {
 	}
 }
 
-func UserFromCreateUserRequest(cur *auth.CreateUserRequest) *User {
-	return &User{
-		Username: cur.Username,
-		Password: cur.Password,
+func UserFromCreateUserRequest(cur *auth.CreateUserRequest) User {
+	return User{
+		Username: cur.GetUsername(),
+		Password: cur.GetPassword(),
 	}
 }
 
-func UserFromLoginUserRequest(lur *auth.LoginUserRequest) *User {
-	return &User{
-		Username: lur.Username,
-		Password: lur.Password,
+func UserFromLoginUserRequest(lur *auth.LoginUserRequest) User {
+	return User{
+		Username: lur.GetUsername(),
+		Password: lur.GetPassword(),
 	}
 }

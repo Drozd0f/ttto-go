@@ -27,7 +27,7 @@ func (s *Server) reg(c *gin.Context) {
 	}
 
 	if err := s.service.Reg(c.Request.Context(), &u); err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -48,7 +48,7 @@ func (s *Server) login(c *gin.Context) {
 
 	t, err := s.service.Login(c.Request.Context(), &u)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 

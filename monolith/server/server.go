@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 
-	"github.com/Drozd0f/ttto-go/conf"
+	"github.com/Drozd0f/ttto-go/monolith/conf"
 	"github.com/Drozd0f/ttto-go/monolith/server/middleware"
 	"github.com/Drozd0f/ttto-go/monolith/service"
 )

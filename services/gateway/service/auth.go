@@ -11,8 +11,8 @@ import (
 )
 
 var (
-	ErrValidation = errors.New("validation error")
-	ErrUserAlreadyExists   = errors.New("user already exist")
+	ErrValidation        = errors.New("validation error")
+	ErrUserAlreadyExists = errors.New("user already exist")
 	ErrUserNotExists     = errors.New("user not exist")
 )
 
@@ -27,10 +27,9 @@ func (s *Service) CreateUser(ctx context.Context, cur *auth.CreateUserRequest) e
 			case stat.Code() == codes.AlreadyExists:
 				return ErrUserAlreadyExists
 			}
-			return fmt.Errorf("auth service create user: %s", stat.Message())
 		}
 
-		return fmt.Errorf("auth service status from error: %w", ErrGrpcBadError)
+		return fmt.Errorf("auth service create user: %w", err)
 	}
 
 	return nil
@@ -41,19 +40,16 @@ func (s *Service) LoginUser(ctx context.Context, lur *auth.LoginUserRequest) (st
 	if err != nil {
 		stat, ok := status.FromError(err)
 		if ok {
-			fmt.Println(stat.Code())
 			switch {
-			case stat.Code() == codes.InvalidArgument:  //TODO: validation error and invalid data in this case refactor to error with details
+			case stat.Code() == codes.InvalidArgument: //TODO: validation error and invalid data in this case refactor to error with details
 				return "", ErrValidation
 			case stat.Code() == codes.NotFound:
 				return "", ErrUserNotExists
 			}
-			return "", fmt.Errorf("auth service login user: %s", stat.Message())
 		}
 
-		return "", fmt.Errorf("auth service status from error: %w", ErrGrpcBadError)
+		return "", fmt.Errorf("auth service login user: %w", err)
 	}
 
-
-	return logUser.Token, err
+	return logUser.GetToken(), nil
 }

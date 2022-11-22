@@ -5,7 +5,7 @@ import (
 
 	"github.com/urfave/cli/v2"
 
-	"github.com/Drozd0f/ttto-go/conf"
+	"github.com/Drozd0f/ttto-go/monolith/conf"
 	"github.com/Drozd0f/ttto-go/monolith/repository"
 	"github.com/Drozd0f/ttto-go/monolith/server"
 	"github.com/Drozd0f/ttto-go/monolith/service"

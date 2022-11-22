@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"errors"
-	"log"
 	"net/http"
 
 	"github.com/Drozd0f/ttto-go/services/gateway/service"
@@ -11,8 +10,8 @@ import (
 
 var handleErrors = map[error]int{
 	service.ErrValidation:        http.StatusBadRequest,
+	service.ErrUserNotExists:     http.StatusNotFound,
 	service.ErrUserAlreadyExists: http.StatusConflict,
-	service.ErrUserNotExists: 	  http.StatusNotFound,
 }
 
 func ErrorHandler(c *gin.Context) {
@@ -29,7 +28,6 @@ func ErrorHandler(c *gin.Context) {
 			}
 		}
 
-		log.Println(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": http.StatusText(http.StatusInternalServerError),
 		})
