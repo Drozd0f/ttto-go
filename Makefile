@@ -10,3 +10,6 @@ generate-sql:
 	sqlc generate
 
 generate: generate-sql
+
+lint:
+	golangci-lint run
