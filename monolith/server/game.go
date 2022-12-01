@@ -26,7 +26,7 @@ func (s *Server) registerGameHandlers(g *gin.RouterGroup) {
 func (s *Server) createGame(c *gin.Context) {
 	g, err := s.service.CreateGame(c.Request.Context())
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -36,7 +36,7 @@ func (s *Server) createGame(c *gin.Context) {
 func (s *Server) getGame(c *gin.Context) {
 	g, err := s.service.GetGameByID(c.Request.Context(), c.Param("gameID"))
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -46,7 +46,7 @@ func (s *Server) getGame(c *gin.Context) {
 func (s *Server) getGames(c *gin.Context) {
 	games, err := s.service.GetGames(c.Request.Context(), c.Request.URL.Query())
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -64,7 +64,7 @@ func (s *Server) makeStep(c *gin.Context) {
 	}
 	g, err := s.service.MakeStep(c.Request.Context(), c.Param("gameID"), coord)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -74,7 +74,7 @@ func (s *Server) makeStep(c *gin.Context) {
 func (s *Server) loginGame(c *gin.Context) {
 	g, err := s.service.LoginGame(c.Request.Context(), c.Param("gameID"))
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -88,7 +88,7 @@ func (s *Server) ws(c *gin.Context) {
 
 	_, err := s.service.GetGameByID(ctx, gameID)
 	if err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 		return
 	}
 
@@ -108,7 +108,7 @@ func (s *Server) ws(c *gin.Context) {
 		}
 		if ctx.Value("user") != nil {
 			if err = s.service.HandleWSMessage(c.Request.Context(), gameID, msg); err != nil {
-				conn.WriteMessage(websocket.TextMessage, []byte(err.Error()))
+				_ = conn.WriteMessage(websocket.TextMessage, []byte(err.Error()))
 				return
 			}
 		}

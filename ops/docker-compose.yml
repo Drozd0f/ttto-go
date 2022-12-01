@@ -3,7 +3,7 @@ version: '3.9'
 services:
   app:
     ports:
-      - "4444:8080"
+      - "8080:8080"
     build: 
       target: prod
       context: ..
@@ -13,6 +13,27 @@ services:
         condition: service_healthy
     env_file:
       - monolith/.env
+
+  gateway:
+    ports:
+      - "4444:8080"
+    build:
+      target: prod
+      context: ..
+      dockerfile: ops/gateway/Dockerfile
+    env_file:
+      - gateway/.env
+
+  auth:
+    build:
+      target: prod
+      context: ..
+      dockerfile: ops/auth/Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - auth/.env
 
   db:
     image: postgres:latest

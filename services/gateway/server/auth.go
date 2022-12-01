@@ -3,30 +3,29 @@ package server
 import (
 	"net/http"
 
+	"github.com/Drozd0f/ttto-go/gen/proto/auth"
 	"github.com/gin-gonic/gin"
-
-	"github.com/Drozd0f/ttto-go/monolith/models"
 )
 
 func (s *Server) registerAuthHandlers(g *gin.RouterGroup) {
 	authG := g.Group("/auth")
 	{
-		authG.POST("/reg", s.reg)
-		authG.POST("/login", s.login)
+		authG.POST("/reg", s.registration)
+		authG.POST("/log", s.login)
 	}
 }
 
-func (s *Server) reg(c *gin.Context) {
-	var u models.User
+func (s *Server) registration(c *gin.Context) {
+	var u *auth.CreateUserRequest
 
-	if err := c.BindJSON(&u); err != nil {
+	if err := c.ShouldBindJSON(&u); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": err.Error(),
 		})
 		return
 	}
 
-	if err := s.service.Reg(c.Request.Context(), &u); err != nil {
+	if err := s.service.CreateUser(c.Request.Context(), u); err != nil {
 		_ = c.Error(err)
 		return
 	}
@@ -37,22 +36,22 @@ func (s *Server) reg(c *gin.Context) {
 }
 
 func (s *Server) login(c *gin.Context) {
-	var u models.User
+	var u *auth.LoginUserRequest
 
-	if err := c.BindJSON(&u); err != nil {
+	if err := c.ShouldBindJSON(&u); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": err.Error(),
 		})
 		return
 	}
 
-	t, err := s.service.Login(c.Request.Context(), &u)
+	token, err := s.service.LoginUser(c.Request.Context(), u)
 	if err != nil {
 		_ = c.Error(err)
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"Auth-Token": t,
+		"token": token,
 	})
 }

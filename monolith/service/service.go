@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/Drozd0f/ttto-go/conf"
+	"github.com/Drozd0f/ttto-go/monolith/conf"
 	"github.com/Drozd0f/ttto-go/monolith/models"
 	"github.com/Drozd0f/ttto-go/monolith/repository"
 )

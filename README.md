@@ -1,4 +1,5 @@
 # API application **``TTT-Online``**
+[![Linter](https://github.com/Drozd0f/ttto-go/actions/workflows/linter.yml/badge.svg)](https://github.com/Drozd0f/ttto-go/actions/workflows/linter.yml)
 
 ## Practice project
 

@@ -1,31 +1,22 @@
-package main
+package migrator
 
 import (
+	"embed"
 	"errors"
 	"fmt"
 	"log"
 
 	"github.com/golang-migrate/migrate/v4"
-	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
-	"github.com/urfave/cli/v2"
-
-	"github.com/Drozd0f/ttto-go/conf"
-	"github.com/Drozd0f/ttto-go/monolith/db/migrations"
 )
 
-func runMonolithMigrate(*cli.Context) error {
-	cfg, err := conf.New()
-	if err != nil {
-		return fmt.Errorf("conf new: %w", err)
-	}
-
-	src, err := iofs.New(migrations.Migrations, ".")
+func Migrate(migrations embed.FS, dbURI string) error {
+	src, err := iofs.New(migrations, ".")
 	if err != nil {
 		return fmt.Errorf("iofs new: %w", err)
 	}
 
-	m, err := migrate.NewWithSourceInstance("iofs", src, cfg.DBURI)
+	m, err := migrate.NewWithSourceInstance("iofs", src, dbURI)
 	if err != nil {
 		return fmt.Errorf("migrate new with source instance: %w", err)
 	}
