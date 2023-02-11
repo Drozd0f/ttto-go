@@ -4,13 +4,13 @@ import (
 	"embed"
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
+	"go.uber.org/zap"
 )
 
-func Migrate(migrations embed.FS, dbURI string) error {
+func Migrate(migrations embed.FS, dbURI string, logg *zap.Logger) error {
 	src, err := iofs.New(migrations, ".")
 	if err != nil {
 		return fmt.Errorf("iofs new: %w", err)
@@ -30,7 +30,10 @@ func Migrate(migrations embed.FS, dbURI string) error {
 		return fmt.Errorf("migration get version: %w", err)
 	}
 
-	log.Printf("current migration %d, is %t\n", v, d)
+	logg.Info("migration applied",
+		zap.Uint("current version", v),
+		zap.Bool("is dirty", d),
+	)
 
 	return nil
 }

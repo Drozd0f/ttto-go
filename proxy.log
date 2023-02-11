@@ -1,0 +1,3 @@
+{"level":"info","timestamp":"2023-02-17T22:20:30.430+0200","msg":"started serving profiler grpc service"}
+{"level":"info","timestamp":"2023-02-17T22:20:30.431+0200","msg":"started serving profiler http service"}
+{"level":"error","timestamp":"2023-02-17T22:20:37.482+0200","msg":"service get user","username":"","error":"repository get user: no result"}
