@@ -95,4 +95,5 @@ profiler-serve: build-profiler
 	PROFILER_DBCONFIG_PORT="5432" \
 	./profiler-bin serve
 
-
+tests:
+	@go test -v ./...
