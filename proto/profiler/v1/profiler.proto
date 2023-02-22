@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+
+package profiler.v1;
+
+import "profiler/v1/profiler_msg.proto";
+import "google/api/annotations.proto";
+
+service ProfilerService {
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse){
+    option(google.api.http)={
+        post: "/api/v1/profiler/user"
+        body: "*"
+    };
+  }
+  rpc GetUserByUsername(GetUserByUsernameRequest) returns (GetUserByUsernameResponse){
+    option(google.api.http)={
+        get: "/api/v1/profiler/user"
+    };
+  }
+}

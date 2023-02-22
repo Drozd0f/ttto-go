@@ -1,16 +1,10 @@
 version: "1"
 packages:
-  - name: "db"
-    emit_json_tags: true
-    emit_prepared_queries: true
-    emit_interface: false
-    path: "monolith/db"
-    queries: "./monolith/db/queries/"
-    schema: "./monolith/db/migrations/"
-  - name: "db"
+  - name: "repository"
     emit_json_tags: false
     emit_prepared_queries: true
     emit_interface: false
-    path: "services/auth/db"
-    queries: "./services/auth/db/queries/"
-    schema: "./services/auth/db/migrations/"
+    path: "/profiler/repository"
+    queries: "./profiler/repository/queries/"
+    schema: "./profiler/repository/migrations/"
+

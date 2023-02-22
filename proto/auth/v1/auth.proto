@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option go_package = "github.com/Drozd0f/ttto-go/auth";
+
+package auth.v1;
+
+import "auth/v1/auth_msg.proto";
+import "google/api/annotations.proto";
+
+service AuthService {
+  rpc LoginUser(LoginUserRequest) returns (LoginUserResponse){
+    option(google.api.http)={
+        post: "/api/v1/login"
+        body: "*"
+    };
+  }
+  rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse){
+    option(google.api.http)={
+        post: "/api/v1/register"
+        body: "*"
+    };
+  }
+}

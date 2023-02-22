@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+
+package profiler.v1;
+
+message CreateUserRequest {
+    string username = 1;
+    string password = 2;
+}
+
+message CreateUserResponse {
+   string id = 1;
+   string username = 2;
+}
+
+message GetUserByUsernameRequest {
+    string username = 1;
+}
+
+message GetUserByUsernameResponse{
+    string id = 1;
+    string username = 2;
+    string password = 3;
+}
